@@ -16,3 +16,15 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/info', function () {
+    $data = ["info" => "Testing route for Postman"];
+    return response()->json($data,200);
+});
+
+Route::post('/request', function (Request $request) {
+    $data = $request->all();
+    return response()->json($data,200);
+});
+
+Route::post('/customer', 'CustomerController@store')->name('customer.store');
