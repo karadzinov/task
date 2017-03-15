@@ -29,3 +29,24 @@ php artisan migrate<br/>
 	  "country": "mk"
 }
 </code>
+
+
+
+
+<p>Method: POST http://task.dev/api/customer/3/withdraw</p>
+<code>
+{
+	"type": 1,
+	"balance": 2010,
+	"currency": "EUR"
+}
+</code>
+
+<p>Method: POST http://task.dev/api/customer/3/deposit</p>
+<code>
+{
+	"type": 0,
+	"balance": 380,
+	"currency": "EUR"
+}
+</code>

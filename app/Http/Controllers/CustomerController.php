@@ -8,47 +8,45 @@ use App\Transaction;
 use Response;
 
 
-
 class CustomerController extends Controller
 {
     public function index()
     {
         $customers = Customer::all();
-        $data      = ["customers" => $customers];
-        return Response::json($data,200);
+        $data = ["customers" => $customers];
+        return Response::json($data, 200);
     }
 
     public function create(Request $request)
     {
-        $input          = $request->all();
-        $input['bonus'] = rand(5,20);
-        $customer       = new Customer();
+        $input = $request->all();
+        $input['bonus'] = rand(5, 20);
+        $customer = new Customer();
         $customer->fill($input)->save();
-        $data = ['edit' => '/api/customer/'.$customer->id.'/edit', "customer" => $input];
-        return Response::json($data,200);
+        $data = ['edit' => '/api/customer/' . $customer->id . '/edit', "customer" => $input];
+        return Response::json($data, 200);
     }
 
     public function store(Request $request)
     {
-        $input          = $request->all();
-        $input['bonus'] = rand(5,20);
-        $customer       = new Customer();
+        $input = $request->all();
+        $input['bonus'] = rand(5, 20);
+        $customer = new Customer();
         $customer->fill($input)->save();
-        $data = ['edit' => '/api/customer/'.$customer->id.'/edit', "customer" => $input];
-        return Response::json($data,200);
+        $data = ['edit' => '/api/customer/' . $customer->id . '/edit', "customer" => $input];
+        return Response::json($data, 200);
     }
 
     public function show($id)
     {
         $customer = Customer::Find($id);
-        if ( ! $customer)
-        {
+        if (!$customer) {
             return response()->json([
                 'message' => 'Record not found',
             ], 404);
         }
-        $data     = ["customer" => $customer];
-        return Response::json($data,200);
+        $data = ["customer" => $customer];
+        return Response::json($data, 200);
     }
 
     public function edit($id)
@@ -59,30 +57,28 @@ class CustomerController extends Controller
     public function update(Request $request, $id)
     {
         $customer = Customer::Find($id);
-        if ( ! $customer)
-        {
+        if (!$customer) {
             return response()->json([
                 'message' => 'Record not found',
             ], 404);
         }
-        $input    = $request->all();
+        $input = $request->all();
         $customer->fill($input)->save();
-        $data     = ["message" => "Customer successfully updated", "customer" => $customer];
-        return Response::json($data,200);
+        $data = ["message" => "Customer successfully updated", "customer" => $customer];
+        return Response::json($data, 200);
     }
 
     public function destroy($id)
     {
         $customer = Customer::Find($id);
-        if ( ! $customer)
-        {
+        if (!$customer) {
             return response()->json([
                 'message' => 'Record not found',
             ], 404);
         }
         $customer->delete();
-        $data     = ["message" => "Customer successfully deleted"];
-        return Response::json($data,200);
+        $data = ["message" => "Customer successfully deleted"];
+        return Response::json($data, 200);
     }
 
     /**
@@ -93,8 +89,7 @@ class CustomerController extends Controller
     public function deposit(Request $request, $id)
     {
         $customer = Customer::Find($id);
-        if ( ! $customer)
-        {
+        if (!$customer) {
             return response()->json([
                 'message' => 'Record not found',
             ], 404);
@@ -103,19 +98,19 @@ class CustomerController extends Controller
         $input = $request->all();
 
         $transaction = New Transaction();
-        if(isset($input['type'])) {
+        if (isset($input['type'])) {
             $transaction['type'] = $input['type'];
         }
 
-        if(isset($input['balance'])) {
+        if (isset($input['balance'])) {
             $transaction['balance'] = $input['balance'];
         }
 
-        if(isset($input['bonus'])) {
+        if (isset($input['bonus'])) {
             $transaction['bonus'] = $input['bonus'];
         }
 
-        if(isset($input['currency'])) {
+        if (isset($input['currency'])) {
             $transaction['currency'] = $input['currency'];
         }
 
@@ -123,11 +118,10 @@ class CustomerController extends Controller
         $count = $customer->transaction->count();
 
 
-        if($count > 0 && ($count + 1)%3 === 0)
-        {
-            $transaction['bonus'] = (($customer->bonus  * $transaction['balance']) / 100);
-        }
-        else {
+        //  $count%3 == 2 for every third element
+        if ($count > 0 && ($count + 1) % 3 === 0) {
+            $transaction['bonus'] = (($customer->bonus * $transaction['balance']) / 100);
+        } else {
             $transaction['bonus'] = 0;
         }
 
@@ -137,7 +131,71 @@ class CustomerController extends Controller
 
         $type = "Deposit";
 
-        $data  = ["type" => $type, "transaction" => $transaction, "customer" => $customer];
-        return Response::json($data,200);
+        $data = ["type" => $type, "transaction" => $transaction, "customer" => $customer];
+        return Response::json($data, 200);
     }
+
+    public function withdraw(Request $request, $id)
+    {
+        $customer = Customer::Find($id);
+        if (!$customer) {
+            return response()->json([
+                'message' => 'Record not found',
+            ], 404);
+        }
+
+        $input = $request->all();
+
+        $transaction = New Transaction();
+        if (isset($input['type'])) {
+            $transaction['type'] = $input['type'];
+        }
+
+        if (isset($input['balance'])) {
+            $transaction['balance'] = $input['balance'];
+        }
+
+
+        if (isset($input['currency'])) {
+            $transaction['currency'] = $input['currency'];
+        }
+
+        // set bonus to zero
+        $transaction['bonus'] = 0;
+
+        $balances = $customer->transaction;
+        $deposit = (int)0;
+        $withdraw = (int)0;
+        foreach ($balances as $balance) {
+            // get total balance of deposit
+            if ($balance->type == 0) {
+                $deposit += $balance->balance;
+            }
+
+            // get total balance of withdraw
+            if ($balance->type == 1) {
+                $withdraw += $balance->balance;
+            }
+        }
+
+        $totalBalance = (int)$deposit - (int)$withdraw;
+
+        if ($transaction['balance'] <= $totalBalance) {
+            $customerId = array($customer->id);
+            $transaction->save();
+            $transaction->customer()->sync($customerId);
+        } else {
+            return response()->json([
+                'message' => 'You can only withdraw ' . ($totalBalance) . " " . $balance->currency,
+            ], 200);
+        }
+
+        $type = "Withdraw";
+
+        $data = ["type" => $type, "transaction" => $transaction, "customer" => $customer];
+
+        return Response::json($data, 200);
+    }
+
+
 }
