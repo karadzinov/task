@@ -31,7 +31,14 @@ php artisan migrate<br/>
 </code>
 
 
-
+<p>Method: POST http://task.dev/api/customer/3/deposit</p>
+<code>
+{
+	"type": 0,
+	"balance": 380,
+	"currency": "EUR"
+}
+</code>
 
 <p>Method: POST http://task.dev/api/customer/3/withdraw</p>
 <code>
@@ -42,11 +49,3 @@ php artisan migrate<br/>
 }
 </code>
 
-<p>Method: POST http://task.dev/api/customer/3/deposit</p>
-<code>
-{
-	"type": 0,
-	"balance": 380,
-	"currency": "EUR"
-}
-</code>

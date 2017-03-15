@@ -31,4 +31,4 @@ Route::resource('/customer', 'CustomerController');
 Route::get('/customers', 'CustomerController@index');
 Route::post('/customer/{id}/deposit', 'CustomerController@deposit');
 Route::post('/customer/{id}/withdraw', 'CustomerController@withdraw');
-
+Route::get('/report', 'CustomerController@report');

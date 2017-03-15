@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Customer;
 use App\Transaction;
 use Response;
-
+use DB;
 
 class CustomerController extends Controller
 {
@@ -195,6 +195,41 @@ class CustomerController extends Controller
         $data = ["type" => $type, "transaction" => $transaction, "customer" => $customer];
 
         return Response::json($data, 200);
+    }
+
+    public function report()
+    {
+        $customers = Customer::get();
+
+        $uniqueCustomers = array();
+        $result = Customer::with('transaction')->where('country', '=', 'mk')->get();
+
+        $uniqueTransactions = count($result[0]->transaction);
+        $transactions = $result[0]->transaction;
+
+        $deposit = (int)0;
+        $withdraw = (int)0;
+
+        foreach ($transactions as $transaction) {
+            // get total balance of deposit
+            if ($transaction->type == 0) {
+                $deposit += $transaction->balance;
+            }
+
+            // get total balance of withdraw
+            if ($transaction->type == 1) {
+                $withdraw += $transaction->balance;
+            }
+        }
+
+        foreach($customers as $customer) {
+            $uniqueCustomers[] = DB::table('customer_transaction')->where('customer_id', '=', $customer->id)->get();
+        }
+
+        $uniqueCustomers = count($uniqueCustomers);
+
+        $data = ["customers" => $customers, "unique" => $uniqueCustomers, "uniqueTransactions" => $uniqueTransactions, "deposit" => $deposit, "withdraw" => $withdraw];
+        return view('welcome')->with($data);
     }
 
 
