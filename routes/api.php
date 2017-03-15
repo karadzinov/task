@@ -27,4 +27,5 @@ Route::post('/request', function (Request $request) {
     return response()->json($data,200);
 });
 
-Route::post('/customer', 'CustomerController@store')->name('customer.store');
+Route::resource('/customer', 'CustomerController');
+Route::get('/customers', 'CustomerController@index');
