@@ -9,8 +9,8 @@ php artisan migrate<br/>
 <h3>Customer routes:</h3>
 <hr />
 <p>Get all costumers</p>
-<p>Method: GET http://task.dev/api/customer</p>
-<p>Method: POST http://task.dev/api/customer</p>
+<p>Method: GET http://task.mikrobee.com/api/customer</p>
+<p>Method: POST http://task.mikrobee.com/api/customer</p>
 <code>
 {
 	  "firstname": "Martin",
@@ -20,10 +20,10 @@ php artisan migrate<br/>
 	  "country": "mk"
 }
 </code>
-<p>Method: GET http://task.dev/api/customer/{id}</p>
+<p>Method: GET http://task.mikrobee.com/api/customer/{id}</p>
 
-<p>Method: DELETE http://task.dev/api/customer/{id}</p>
-<p>Method: PUT/PATCH http://task.dev/api/customer/{id}</p>
+<p>Method: DELETE http://task.mikrobee.com/api/customer/{id}</p>
+<p>Method: PUT/PATCH http://task.mikrobee.com/api/customer/{id}</p>
 <code>
 {
 	  "country": "mk"
@@ -31,7 +31,7 @@ php artisan migrate<br/>
 </code>
 
 
-<p>Method: POST http://task.dev/api/customer/3/deposit</p>
+<p>Method: POST http://task.mikrobee.com/api/customer/3/deposit</p>
 <code>
 {
 	"type": 0,
@@ -40,7 +40,7 @@ php artisan migrate<br/>
 }
 </code>
 
-<p>Method: POST http://task.dev/api/customer/3/withdraw</p>
+<p>Method: POST http://task.mikrobee.com/api/customer/3/withdraw</p>
 <code>
 {
 	"type": 1,
