@@ -29,3 +29,5 @@ Route::post('/request', function (Request $request) {
 
 Route::resource('/customer', 'CustomerController');
 Route::get('/customers', 'CustomerController@index');
+Route::post('/customer/{id}/deposit', 'CustomerController@deposit');
+
