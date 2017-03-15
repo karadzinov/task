@@ -2,9 +2,9 @@
 <p>Laravel Project for customer depositing and withdrawing money</p>
 <h2>Installation</h2>
 <p>
-git clone https://github.com/karadzinov/task.git
-composer install
-php artisan migrate
+git clone https://github.com/karadzinov/task.git<br/>
+composer install<br/>
+php artisan migrate<br/>
 </p>
 <h3>Customer routes:</h3>
 <hr />
